@@ -7,16 +7,11 @@
 
 #include <netinet/in.h>
 #include <sys/socket.h>
-#include <sys/types.h>
 #include <string>
 #include "Session.h"
-#include <vector>
 
 #ifndef SRC_SERVER_SERVERSOCKET_H_
 #define SRC_SERVER_SERVERSOCKET_H_
-
-#define RECV_WDW_BYTE 100
-#define MAX_CLIENT_SUPPORT 100
 
 class ServerSocket {
 
@@ -35,29 +30,12 @@ class ServerSocket {
 	int _serverSocketFD;
 	int newSockFd;
 
-	std::vector<Session *> sessions;
-	char cntrlBuffer[RECV_WDW_BYTE];
-	char sendBuffer[RECV_WDW_BYTE];
+	char cntrlBuffer[MSS];
+	char sendBuffer[MSS];
 
 private:
-
-	int _i;
-
-	int clientSockFd [MAX_CLIENT_SUPPORT];
-
 	void onConnection ();
-	void addSocket (int clientSocktId) {
-		if (_i < MAX_CLIENT_SUPPORT) {
-			this->clientSockFd[_i++] = clientSocktId;
-		}
-	}
-
 public:
-
-	enum ERROR_TYPE {
-		INVALID_TUPLE,
-		MAX_SOCKET_RCHD
-	};
 
 	ServerSocket();
 
@@ -81,29 +59,9 @@ public:
 	void stop();
 
 	/**
-	 *Spawn a process to handle new clients.
-	 */
-	void spawnProcess ();
-
-	/**
-	 * Get live client based on desc.
-	 */
-	int getLiveClient (int clientDesc);
-
-	/**
-	 *Kill a client
-	 */
-	void killClient(int clientDesc);
-
-	/**
-	 *Kill All running clients.
-	 */
-	void killAll ();
-
-	/**
 	 *Read from input stream
 	 */
-	std::string readFrom(const std::string control);
+	string readFrom(const std::string control);
 
 	/**
 	 *Write to output stream

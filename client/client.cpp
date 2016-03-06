@@ -105,23 +105,11 @@ void Client::ftpApp () {
 
 		bool locallyHandled = this->handleCommand(cntrlBuff);
 		if (locallyHandled) {
-//			printf("Locally handled \n");
 			if (numbytes == 0 || strncmp(cntrlBuff,"bye", 3) == 0) {
 				break;
 			}
 			continue;
 		}
-
-//		int str_size = strlen(sendBuf);
-//		int n = send(sockfd, &str_size, sizeof(str_size), 0);
-//		if (n < 0) {
-//			error("First ERROR writing to socket");
-//		}
-//
-//		n = send(sockfd, sendBuf, str_size, 0);
-//		if (n < 0) {
-//			error("Second ERROR writing to socket");
-//		}
 
 		//send to server
 		write(cntrlBuff);
@@ -133,32 +121,10 @@ void Client::ftpApp () {
 		if (string(res) != "SIG_DONE") {
 			printf("%s\n", res.c_str());
 		}
-
-//		memset(recvBuf, 0, 100);
-//		int string_size = 0;
-//		int nBytes = recv(sockfd, &string_size, sizeof(string_size), 0);
-//		printf("Recv received %d\n", nBytes);
-//		nBytes = recv(sockfd, recvBuf, string_size, 0);
-//		printf("Second Recv received %d\n", nBytes);
-//		recvBuf[string_size] = '\0';
-//		if (nBytes == 0) {
-//			printf("0 bytes received\n");
-//			continue;
-//		}
-//
-//		if (nBytes == -1) {
-//			error("ERROR reading from socket");
-//		}
-//
-//		if (string(recvBuf) != "SIG_DONE") {
-//			printf("%s\n", recvBuf);
-//		}
 	}
 }
 
 void Client::sessionGet (string sfilePath) {
-	printf("sessionGet\n");
-
 	FILE * _fi = this->_fs->write(sfilePath);
 	if (_fi == NULL) {
 		printf("Failed to open file\n");
@@ -198,14 +164,16 @@ void Client::sessionGet (string sfilePath) {
 }
 
 bool Client::handleCommand (string control) {
+	if (control.length() <= 1) {
+		printf(":command not supported\n");
+		return true;
+	}
+
 	string toClient = "";
 	string copyControl = control;
 	commandStruct cs = this->_fs->parseControl(copyControl);
-
-//	printf("Control structure %s %s\n", cs.control.c_str(), cs.rPath.c_str());
 	string cntrl = cs.control;
 	string path = cs.rPath;
-//	printf("Control structure parsed: %s %s \n",cntrl.c_str(), path.c_str());
 
 	if (cntrl == LLS) {
 		toClient = this->_fs->ls();
@@ -218,8 +186,6 @@ bool Client::handleCommand (string control) {
 			this->_fs->cd(path);
 		}
 	} else if (cntrl == GET) {
-//		string fileToSave = this->_fs->pwd().append("/").append(path);
-
 	    string fileName = path;
 		printf("File will be save locally to %s\n", fileName.c_str());
 		printf("File will be save locally to %s\n", control.c_str());
@@ -229,14 +195,11 @@ bool Client::handleCommand (string control) {
 
 		//blocking call to wait for download.
 		sessionGet(fileName);
-
-		printf("Done downloading file\n");
 	} else if (cntrl == BYE) {
 		printf("bye\n");
 		write(cntrlBuff);
 	}
 	else {
-		printf("Command locally not handled \n");
 		return false;
 	}
 
@@ -254,11 +217,7 @@ std::string Client::read () {
 	int string_size = 0;
 
 	int nBytes = recv(sockfd, &string_size, sizeof(string_size), 0);
-
-	printf("Recv received %d\n", nBytes);
 	nBytes = recv(sockfd, recvBuf, string_size, 0);
-
-	printf("Second Recv received %d\n", nBytes);
 	recvBuf[string_size] = '\0';
 
 	if (nBytes == 0) {
@@ -273,13 +232,6 @@ std::string Client::read () {
 }
 
 void Client::write(string message) {
-
-	if (message == "") {
-		message = "SIG_DONE";
-	}
-
-	printf("Sending message back %s\n", message.c_str());
-
 	int str_size = strlen(message.c_str());
 	int n = send(sockfd, &str_size, sizeof(str_size), 0);
 	n = send(sockfd, message.c_str(), str_size, 0);
@@ -287,123 +239,4 @@ void Client::write(string message) {
 	if (n == -1) {
 		error("ERROR writing to socket");
 	}
-	printf("echo back: %s\n", message.c_str());
 }
-
-//int main(int argc, char *argv[])
-//{
-//    int sockfd, portno, n;
-//    struct sockaddr_in serv_addr;
-//    struct hostent *he;
-//
-//    char rcvBuffer[100];
-//    char sendBuffer[100];
-//
-////    if (argc < 3) {
-////       fprintf(stderr,"usage %s hostname port\n", argv[0]);
-////       exit(0);
-////    }
-//    portno = atoi(argv[2]);
-//
-////	int ret = inet_pton(AF_INET, argv[1], &serv_addr.sin_addr);
-////	if (ret == 0) {
-////	  error("Invalid IP address");
-////	  return 0;
-////	}
-//
-////	char ipa [500];
-////	inet_ntop(AF_INET, &serv_addr.sin_addr, ipa, INET_ADDRSTRLEN);
-////	printf("Client will connect at %s \n\n", ipa);
-//
-//	he = gethostbyname(argv[1]);
-//    if (he == NULL) {
-//        fprintf(stderr,"ERROR, no such host\n");
-//        exit(1);
-//    }
-//
-//    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-//    if (sockfd == -1) {
-//        error("ERROR opening socket");
-//        exit(1);
-//    }
-//
-//
-////    bzero((char *) &serv_addr, sizeof(serv_addr));
-//    serv_addr.sin_family = AF_INET;
-//    serv_addr.sin_port = htons(portno);
-//    bcopy((char *)he->h_addr,
-//             (char *)&serv_addr.sin_addr.s_addr,
-//			 he->h_length);
-//    memset(&(serv_addr.sin_zero), '\0', 8);
-////    struct
-//
-////    bcopy((char *)server->h_addr,
-////         (char *)&serv_addr.sin_addr.s_addr,
-////         server->h_length);
-////    serv_addr.sin_port = htons(portno);
-//
-//    printf("Connecting...\n");
-//    if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(struct sockaddr)) == -1) {
-//        error("ERROR connecting");
-//        exit(1);
-//    }
-//
-//    printf("Client connected...\n");
-//
-//    //read the entry
-////    bzero(rcvBuffer, 100);
-////	read(sockfd, rcvBuffer,100);
-////	printf("%s\n\n", rcvBuffer);
-//
-//	while(1) {
-//	    bool quit = 0;
-//
-//		printf("# ");
-//
-//		bzero(sendBuffer, 100);
-//		bzero(rcvBuffer, 100);
-//
-//		//Read from stdInput.
-//		fgets(sendBuffer, 100, stdin);
-//
-////		char *pos;
-////		if ((pos=strchr(Name, '\n')) != NULL)
-////		    *pos = '\0';
-//
-//		int numbytes = sizeof(sendBuffer);
-//		sendBuffer[numbytes]='\0'; //null terminate
-////		strtok(sendBuffer, "\n");
-//
-//		if (numbytes == 0 || strncmp(sendBuffer,"bye", 3) == 0) {
-//			printf("bye\n");
-//			//close the socket
-//			send(sockfd, sendBuffer, sizeof(sendBuffer), 0);
-//			break;
-//		}
-//
-//		printf("Sending to server: %s\n", sendBuffer);
-//		n = send(sockfd, sendBuffer, sizeof(sendBuffer), 0);
-//
-////		printf("error %d", errno);
-//
-//		if (n < 0) {
-//			error("ERROR writing to socket");
-//		}
-//
-//		printf("Byte written to socket %s", sendBuffer);
-//
-//		n = recv(sockfd, rcvBuffer, 127, 0);
-//		if (n < 0) {
-//			error("ERROR reading from socket");
-//			exit(1);
-//		}
-//
-//		rcvBuffer[n] ='\0';
-//
-//		printf("%s\n", rcvBuffer);
-//    }
-//
-//    printf("Outside of Loop closing!!!");
-//    close(sockfd);
-//    return 0;
-//}

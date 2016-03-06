@@ -33,7 +33,6 @@ int main(int argc, char *argv[])
        exit(1);
     }
 
-    printf("Entry Client \n");
     int portnumber = atoi(argv[2]);
     string ipAddress = argv[1];
     int portno = atoi(argv[2]);
