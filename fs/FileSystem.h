@@ -261,27 +261,6 @@ public:
 
 		FILE * f = fopen(file.c_str(), "r");
 		return f;
-
-//		int fd = open(file.c_str(), O_RDONLY);
-//		if (fd < 0) {
-//			printf("Error opening file %s\n", file.c_str());
-//			fInfo.fd = -1;
-//			fInfo.size = -1;
-//			return fInfo;
-//		}
-//
-//		struct stat file_stat;
-//		int stat = fstat(fd, &file_stat);
-//		if (stat < 0) {
-//			printf("Error getting file state\n");
-//			fInfo.fd = -1;
-//			fInfo.size = -1;
-//			return fInfo;
-//		}
-//
-//		fInfo.fd = fd;
-//		fInfo.size = file_stat.st_size;
-//		return fInfo;
 	}
 
 	commandStruct parseControl (string control) {
@@ -294,7 +273,6 @@ public:
 
 		int i = 0;
 		while (std::getline(f, s, ' ')) {
-//			cout <<"parseControl:" << s << endl;
 			if (s == "") {
 				continue;
 			}
@@ -304,7 +282,6 @@ public:
 		commandStruct cs;
 		cs.control = com[0];
 		cs.rPath = com[1];
-//		cout <<"parseControl:EXIT"<< endl;
 		return cs;
 	}
 
