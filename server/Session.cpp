@@ -37,6 +37,7 @@ const string PWD = "pwd";
 const string CD  = "cd";
 const string LS  = "ls";
 const string GET = "get";
+const string EXIT = "exit";
 const string BACK = "..";
 
 Session::Session(int sockFd, int pid) {
@@ -157,9 +158,10 @@ void Session::startSession() {
 			onError("ERROR reading from socket");
 		}
 
+		bool exit = strncmp(this->cntrlBuffer, "exit", 4) == 0;
 		bool quit = strncmp(this->cntrlBuffer, "bye", 3) == 0;
 
-		if (quit) {
+		if (quit || exit) {
 			this->dispose();
 			break;
 		} else {

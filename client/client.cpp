@@ -34,6 +34,7 @@ const string LCD  = "lcd";
 const string LLS  = "lls";
 const string GET = "get";
 const string BYE = "bye";
+const string EXIT = "exit";
 const string BACK = "..";
 
 Client::Client() { }
@@ -106,7 +107,9 @@ void Client::ftpApp () {
 
 		bool locallyHandled = this->handleCommand(cntrlBuff);
 		if (locallyHandled) {
-			if (numbytes == 0 || strncmp(cntrlBuff,"bye", 3) == 0) {
+			if (numbytes == 0 ||
+					strncmp(cntrlBuff,"bye", 3) == 0 ||
+					strncmp(cntrlBuff,"exit", 4) == 0 ) {
 				break;
 			}
 			continue;
@@ -190,7 +193,7 @@ bool Client::handleCommand (string control) {
 			//blocking call to wait for download.
 			sessionGet(fileName);
 //		}
-	} else if (cntrl == BYE) {
+	} else if (cntrl == BYE || cntrl == EXIT) {
 		printf("bye\n");
 		write(cntrlBuff);
 	}
