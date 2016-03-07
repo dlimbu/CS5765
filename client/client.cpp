@@ -1,7 +1,7 @@
 /*
  * client.cpp
  *
- *  Created on: Feb 22, 2016
+ *  Created on: Mar 4, 2016
  *      Author: Dlimbu
  */
 
@@ -196,6 +196,10 @@ bool Client::handleCommand (string control) {
 	}
 	else {
 		return false;
+	}
+
+	if (toClient.size() > 0) {
+		printf("%s\n", toClient.c_str());
 	}
 
 	return true;
