@@ -27,6 +27,7 @@ output: two binaries will be created sns(simple network server) and snc (simple 
 - lpwd
 - lcd
 - bye
+- exit
 - help
 
 #####example:
