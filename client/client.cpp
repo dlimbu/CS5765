@@ -182,14 +182,14 @@ bool Client::handleCommand (string control) {
 	    string fileName = path;
 		//send the control to server.
 		write(control);
-		read();
+//		read();
 
-		if (string(recvBuf) == "FILE_OPEN_ERR") {
-			printf("Error %s\n", recvBuf);
-		} else {
+//		if (string(recvBuf) == "FILE_OPEN_ERR") {
+//			printf("Error %s\n", recvBuf);
+//		} else {
 			//blocking call to wait for download.
 			sessionGet(fileName);
-		}
+//		}
 	} else if (cntrl == BYE) {
 		printf("bye\n");
 		write(cntrlBuff);

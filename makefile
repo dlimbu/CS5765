@@ -2,9 +2,10 @@ CC=g++
 CFLAGS=-I.
 
 #server
-sns: NetworkManager.o server/ServerSocket.o server/Session.o fs/FileSystem.o
-	$(CC) -o sns NetworkManager.o server/ServerSocket.o server/Session.o fs/FileSystem.o $(CFLAGS)
+sns: networkManager.cpp server/ServerSocket.cpp server/Session.cpp fs/FileSystem.cpp
+	$(CC) -o sns networkManager.cpp server/ServerSocket.cpp server/Session.cpp fs/FileSystem.cpp $(CFLAGS)
 	
 #client
-snc: ClientNetwokManager.o client/client.o fs/FileSystem.o
-	$(CC) -o snc ClientNetwokManager.o client/client.o fs/FileSystem.o $(CFLAGS)
+snc: ClientNetwokManager.cpp client/client.cpp fs/FileSystem.cpp
+	$(CC) -o snc ClientNetwokManager.cpp client/client.cpp fs/FileSystem.cpp -I.
+
