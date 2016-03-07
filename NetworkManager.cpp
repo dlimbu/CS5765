@@ -38,9 +38,6 @@ int main(int argc, char * argv []) {
 	ServerSocket *s = new ServerSocket();
 	string ipAddress = argv[1];
 	int portno = atoi(argv[2]);
-
-	printf("IP address passed in argument %s, %d\n", ipAddress.c_str(), portno);
-
 	s->start(ipAddress.c_str(), portno);
 
 	return 0;

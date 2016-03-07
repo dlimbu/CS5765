@@ -100,8 +100,6 @@ void ServerSocket::start(const char * ip, int port) {
 
 	if (this->_serverSocketFD == -1) {
 		error("ERROR opening socket");
-	} else {
-		fprintf(stdout,"Socket open successful!!\n");
 	}
 
 	int portno = port;
@@ -155,7 +153,7 @@ void ServerSocket::onConnection () {
 			continue;
 		}
 
-		printf("New client connected %s \n\n", inet_ntoa(this->clientAddr.sin_addr));
+		printf("#New client connected %s \n\n", inet_ntoa(this->clientAddr.sin_addr));
 
 		char * recvBuf;
 		int numBytes;
