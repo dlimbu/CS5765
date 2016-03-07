@@ -1,5 +1,6 @@
 #####untar
 gunzip filename.tar.gz
+
 tar -xvf ../filename.tar
 
 #####Compile server and client
