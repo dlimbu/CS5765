@@ -1,3 +1,6 @@
+#####untar
+tar -xvf ../lim6805.tar
+
 #####Compile server and client
 
 $ make sns snc
