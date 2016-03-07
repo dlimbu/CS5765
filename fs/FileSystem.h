@@ -38,19 +38,13 @@ struct commandStruct {
  *File system error type
  */
 enum FS_ERROR {
-
 	//File errors.
-	INVALID_FILE = 1,
-
-	ERROR_OPENING_FILE = INVALID_FILE + 1,
-
-	ERROR_READING_FILE_STATE = ERROR_OPENING_FILE + 1,
-
+	INVALID_FILE,
+	ERROR_OPENING_FILE,
 
 	//Directory errors
-	ERROR_OPENING_DIR = 500 + 1,
-
-	ERROR_LISTING_DIR = ERROR_OPENING_DIR + 1
+	ERROR_OPENING_DIR,
+	ERROR_LISTING_DIR
 };
 
 class FileSystem {
@@ -86,32 +80,31 @@ public:
 	 */
 	void openFs(string path) {
 		string root = '.' + path;
-		printf("Opening file: %s\n", root.c_str());
+
 		DIR * _t = opendir (root.c_str());
 
 		if (_t == NULL) {
 			printf("Error opening %s\n", root.c_str());
 			return;
 		}
-		printf("Storage open successful\n");
+
 		close();
 
 		_dir = _t;
 		_currPath = path;
 
 		ls();
-		printf("openFs Exit\n");
 	}
 
 	/**
-	 *
+	 * is File
 	 */
 	bool isFile (const char code) {
 		return code == 0x8;
 	};
 
 	/**
-	 *
+	 * is directory
 	 */
 	bool isDir (const char code) {
 		return code == 0x4;
@@ -121,13 +114,9 @@ public:
 	 *
 	 */
 	string ls () {
-//		printf("ls ENTRY\n");
-
 		string _res;
-
 		try {
 			aCode.clear();
-
 			while ((ent = readdir(_dir)) != NULL) {
 
 				if (strcmp(ent->d_name, ".") == 0 ||
@@ -135,25 +124,20 @@ public:
 					continue;
 				}
 
-//				printf("file name %s\n", ent->d_name);
-
 				if(isDir(ent->d_type)) {
 					_res.append(ent->d_name);
-					_res.append("\t");
+					_res.append(" ");
 					aCode[ent->d_name] = 0x4;
 				} else if (isFile(ent->d_type)) {
 					_res.append(ent->d_name);
-					_res.append("\t");
+					_res.append(" ");
 					aCode[ent->d_name] = 0x8;
 				}
 			}
 			rewinddir(_dir);
-//			printf("%s\n", _res.c_str());
 		} catch (exception& e) {
 			printf("Exception in LS %s", e.what());
 		}
-
-//		printf("LS exit End %s\n", _res.c_str());
 		return _res;
 	}
 
@@ -183,7 +167,6 @@ public:
 
 		//remove the last path
 		path = path.substr(0, i);
-		printf("back path is: %s \n", path.c_str());
 		openFs(path);
 	}
 
@@ -191,7 +174,6 @@ public:
 	 *
 	 */
 	void cd (string dir) {
-
 		if (dir.compare("") == 0 ||
 				dir.compare(_currPath) == 0) {
 			printf("Invalid CD\n");
@@ -204,7 +186,6 @@ public:
 			return;
 		}
 
-		printf("CD entry\n");
 		string cwdPath = _currPath;
 		cwdPath.append("/").append(dir);
 		openFs(cwdPath);
@@ -230,7 +211,6 @@ public:
 	FILE * write (string file) {
 		string copy = _currPath;
 		string fPath = "."+ copy.append("/").append(file);
-		printf("path and file name: %s\n", fPath.c_str());
 		FILE * f = fopen(fPath.c_str(), "w");
 		return f;
 	}
@@ -289,18 +269,13 @@ public:
 	 *
 	 */
 	void close () {
-		printf("close entry\n");
 		if (aCode.size() >= 1) {
 			aCode.clear();
-			printf("Cleared acode...\n");
 		}
 
 		if (_dir != NULL) {
 			closedir(_dir);
-			printf("Closing dir\n");
 		}
-
-		printf("close done \n");
 	}
 
 	/**

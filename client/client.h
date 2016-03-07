@@ -27,8 +27,7 @@
 #define SRC_CLIENT_CLIENT_H_
 
 #define PORT 1490
-#define MAX_DATA_SIZE 100
-#define CLIENT_RCV_WINDOW 100
+#define MSS 100
 
 using namespace std;
 
@@ -38,29 +37,23 @@ private:
 
 	int sockfd;
 	int portno;
-	int n;
 	struct sockaddr_in serv_addr;
 	struct hostent *server;
 
-	char cntrlBuff[100];
-    char recvBuf[100];
+	char cntrlBuff[MSS];
+    char recvBuf[MSS];
 
 public:
 	Client();
 
 	void openFs () {
-		printf("\n##### Initializing fileSystem ##### \n");
 		_fs = new FileSystem();
-
 		string storage = "/clientStorage";
-		printf("FileSystem opening storage %s\n", storage.c_str());
 		try {
 			_fs->openFs(storage.c_str());
 		} catch (exception& e) {
 			printf("Error %d\n", errno);
 		}
-
-		printf("##### Done initializing FileSystem ##### \n");
 	}
 
 	bool handleCommand (std::string c);
@@ -74,6 +67,7 @@ public:
 	string read ();
 
 	void sessionGet(string sfilePath);
+
 	void write (string v);
 
 	virtual ~Client();

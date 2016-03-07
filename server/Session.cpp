@@ -73,7 +73,7 @@ void Session::_sessionGet (std::string pathToFile) {
 	FILE * _fi = this->_fs->read(pathToFile);
 	if (_fi == NULL) {
 		printf("Failed to open file\n");
-		write("");
+		write("FILE_OPEN_ERR");
 		return;
 	}
 
@@ -202,7 +202,7 @@ void Session::write(string message) {
 		onError("ERROR writing to socket");
 	}
 
-	printf("echo back: %s\n", message.c_str());
+	printf("Echo %s\n", message.c_str());
 }
 
 

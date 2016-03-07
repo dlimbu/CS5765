@@ -48,15 +48,16 @@ void error(const char *msg)
     exit(0);
 }
 
+/**
+ * Start socket
+ */
 void Client::start(string ip, int port) {
 
 	this->sockfd = socket(AF_INET, SOCK_STREAM, 0);
-
-	printf("Entry start \n");
 	if (this->sockfd < 0) {
 		error("ERROR opening socket");
 	}
-	printf("Client connecting to %s:%d\n", ip.c_str(), port);
+
 	server = gethostbyname(ip.c_str());
     if (server == NULL) {
         fprintf(stderr,"ERROR, no such host\n");
@@ -73,12 +74,9 @@ void Client::start(string ip, int port) {
 
 	this->serv_addr.sin_port = htons(port);
 
-	printf("Connecting.....\n");
 	if (connect(this->sockfd,(struct sockaddr *) &serv_addr,sizeof(this->serv_addr)) < 0) {
 		error("ERROR connecting");
 	}
-
-	printf("Client connect to %s:%d\n", ip.c_str(), port);
 
 	string s = "\t\tWelcome to SFTP 0.0.1 \n\tAccepted commands: ls, pwd, cd, get";
 	printf("%s\n", s.c_str());
@@ -89,12 +87,15 @@ void Client::start(string ip, int port) {
 	close(sockfd);
 }
 
+/**
+ * Launch FTP client.
+ */
 void Client::ftpApp () {
 
     this->openFs();
 
 	while(1) {
-		printf("# ");
+		printf("$: ");
 
 		memset(cntrlBuff, 0, 100);
 		fgets(cntrlBuff, 100, stdin);
@@ -124,6 +125,9 @@ void Client::ftpApp () {
 	}
 }
 
+/**
+ * download file
+ */
 void Client::sessionGet (string sfilePath) {
 	FILE * _fi = this->_fs->write(sfilePath);
 	if (_fi == NULL) {
@@ -131,38 +135,27 @@ void Client::sessionGet (string sfilePath) {
 		return;
 	}
 
-	int fr_block_sz = 0;
-
-    //100byte read
-	while((fr_block_sz = recv(sockfd, recvBuf, MAX_DATA_SIZE, 0)) > 0) {
-			int write_sz = fwrite(recvBuf, sizeof(char), fr_block_sz, _fi);
-			printf("writing byte to local file %d\n", write_sz);
-			printf("writing data to local file %s\n", recvBuf);
-
-			if(write_sz < fr_block_sz)
-			{
-				error("File write failed.\n");
-			}
-			bzero(recvBuf, MAX_DATA_SIZE);
-			if (fr_block_sz == 0 || fr_block_sz != MAX_DATA_SIZE)
-			{
-				printf("Breaking out download %d\n", fr_block_sz);
-				break;
-			}
-	}
-
-	if(fr_block_sz < 0) {
-		if (errno == EAGAIN) {
-			printf("recv() timed out.\n");
-		} else {
-			fprintf(stderr, "recv() failed due to errno = %d\n", errno);
+	int fByteSize = 0;
+	//100byte MSS read
+	while((fByteSize = recv(sockfd, recvBuf, MSS, 0)) > 0) {
+		int write_sz = fwrite(recvBuf, sizeof(char), fByteSize, _fi);
+		if(write_sz < fByteSize) {
+			printf("Unexpected download Failure, Try again.\n");
+			break;
+		}
+		bzero(recvBuf, MSS);
+		if (fByteSize == 0 || fByteSize != MSS) {
+			printf("Download Complete\n");
+			break;
 		}
 	}
 
-	printf("Ok received from server!\n");
 	fclose(_fi);
 }
 
+/**
+ * Handle control commands.
+ */
 bool Client::handleCommand (string control) {
 	if (control.length() <= 1) {
 		printf(":command not supported\n");
@@ -187,14 +180,16 @@ bool Client::handleCommand (string control) {
 		}
 	} else if (cntrl == GET) {
 	    string fileName = path;
-		printf("File will be save locally to %s\n", fileName.c_str());
-		printf("File will be save locally to %s\n", control.c_str());
-
 		//send the control to server.
 		write(control);
+		read();
 
-		//blocking call to wait for download.
-		sessionGet(fileName);
+		if (string(recvBuf) == "FILE_OPEN_ERR") {
+			printf("Error %s\n", recvBuf);
+		} else {
+			//blocking call to wait for download.
+			sessionGet(fileName);
+		}
 	} else if (cntrl == BYE) {
 		printf("bye\n");
 		write(cntrlBuff);
@@ -203,13 +198,12 @@ bool Client::handleCommand (string control) {
 		return false;
 	}
 
-	if (toClient.size() > 0) {
-		printf("%s\n", toClient.c_str());
-	}
-
 	return true;
 }
 
+/**
+ * Read from socket.
+ */
 std::string Client::read () {
 
 	memset(recvBuf, 0, 100);
@@ -231,6 +225,9 @@ std::string Client::read () {
 	return recvBuf;
 }
 
+/**
+ * Write to socket.
+ */
 void Client::write(string message) {
 	int str_size = strlen(message.c_str());
 	int n = send(sockfd, &str_size, sizeof(str_size), 0);

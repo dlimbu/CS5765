@@ -78,6 +78,9 @@ void ServerSocket::writeTo(string control) {
     }
 }
 
+/**
+ *
+ */
 void error(const char *msg) {
     perror(msg);
     exit(1);
@@ -118,8 +121,6 @@ void ServerSocket::start(const char * ip, int port) {
 		exit(1);
 	}
 
-	//start listening for connection in the server socket.
-	//passive state
 	int l = listen(this->_serverSocketFD, 5);
 	if (l == -1) {
 		perror("Listen error");
@@ -135,18 +136,26 @@ void ServerSocket::start(const char * ip, int port) {
 		exit(1);
 	}
 
+	onConnection();
+}
+
+/**
+ *
+ */
+void ServerSocket::onConnection () {
 	unsigned int sin_size;
+
 	while (1) {
-
 		sin_size = sizeof(struct sockaddr_in);
-		printf("\nENTRY IN LOOP\n");
 
-		if ((this->newSockFd = accept(this->_serverSocketFD, (struct sockaddr *) &this->clientAddr, &sin_size)) == -1) {
+		if ((this->newSockFd = accept(this->_serverSocketFD,
+				(struct sockaddr *) &this->clientAddr,
+				&sin_size)) == -1) {
 			perror("accept");
 			continue;
 		}
 
-		printf("Client connected %s \n\n", inet_ntoa(this->clientAddr.sin_addr));
+		printf("New client connected %s \n\n", inet_ntoa(this->clientAddr.sin_addr));
 
 		char * recvBuf;
 		int numBytes;
@@ -155,28 +164,19 @@ void ServerSocket::start(const char * ip, int port) {
 			error("ERROR on fork");
 		}
 
-		printf("Parent process: %d\n", ::getppid());
-		printf("Current process: %d\n", ::getpid());
-		printf("New Process: %d\n", pid);
-
 		if (pid == 0) {
 			close(this->_serverSocketFD);
 			Session * s = new Session(this->newSockFd, ::getpid());
 			s->startSession();
 
-			printf("Right after startSession(), process: %d\n", ::getpid());
+			printf("Session destroyed for process: %d\n", ::getpid());
 			::kill(s->getSessionId(), SIGKILL);
 			exit(0);
 		}
 		else {
 			close(this->newSockFd);
-			printf("ELSE Parent process pid: %d \n", ::getpid());
 		}
-		printf("Common code execution: %d \n", ::getpid());
 	}
-}
-
-void ServerSocket::onConnection () {
 }
 
 /**

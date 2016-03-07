@@ -1,15 +1,7 @@
-Server:
-# make server
-# ./server <ipaddress> <port>
+make:
+$ make sns snc
 
-FileSystem: serverStorage
-
-Client:
-FileSystem: clientStorage
-
-# make client
-# ./client <ipaddress> <port>
-
+Running ServeR:
 Server supported commands:
 
 
