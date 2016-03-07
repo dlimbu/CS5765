@@ -6,7 +6,7 @@ output: two binaries will be created sns(simple network server) and snc (simple 
 
 #####Running Server:
 
-./sns <ipaddress> <port>
+./sns \<ipaddress> \<port>
 
 #####Server supported commands:
 
@@ -19,7 +19,7 @@ output: two binaries will be created sns(simple network server) and snc (simple 
 
 #####Running client:
 
-./snc <ipaddress> <port>
+./snc \<ipaddress> \<port>
 
 #####Client supported commands:
 
@@ -28,7 +28,8 @@ output: two binaries will be created sns(simple network server) and snc (simple 
 - lcd
 - bye
 - help
-- example:
+
+#####example:
 
 ```
 $: help
