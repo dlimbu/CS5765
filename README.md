@@ -1,5 +1,6 @@
 #####untar
-tar -xvf ../lim6805.tar
+gunzip filename.tar.gz
+tar -xvf ../filename.tar
 
 #####Compile server and client
 
