@@ -79,7 +79,7 @@ void Client::start(string ip, int port) {
 		error("ERROR connecting");
 	}
 
-	string s = "\t\tWelcome to SFTP 0.0.1 \n\tAccepted commands: ls, pwd, cd, get";
+	string s = "\n\n\tWelcome to Simple Network Client (SNC) 0.0.1\n\n";
 	printf("%s\n", s.c_str());
 
 	ftpApp();
@@ -156,6 +156,14 @@ void Client::sessionGet (string sfilePath) {
 	fclose(_fi);
 }
 
+string _showHelp () {
+	string _help ="\nSimple Network Client commands:\n";
+	string remoteCmd="\nRemote:\nls: list files\npwd: server current directory\ncd: change server directory\nget:download a file\n";
+	string localCmd="\nLocal:\nlls: list local files\nlpwd: local current directory\ncd: change local directory"
+			"\nget:download a file\nexit/bye: quit snc app\nhelp: list all available commands\n";
+	return _help + remoteCmd + localCmd;
+}
+
 /**
  * Handle control commands.
  */
@@ -181,6 +189,8 @@ bool Client::handleCommand (string control) {
 		} else {
 			this->_fs->cd(path);
 		}
+	} else if (cntrl == HELP) {
+		toClient = _showHelp();
 	} else if (cntrl == GET) {
 	    string fileName = path;
 		//send the control to server.
