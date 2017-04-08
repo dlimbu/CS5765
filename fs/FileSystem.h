@@ -67,12 +67,9 @@ private:
 	/**
 	 *
 	 */
-	void _onError (int errorCode) {
-
-	}
+	void _onError (int errorCode) { }
 
 public:
-
 	FileSystem();
 
 	/**

@@ -78,7 +78,7 @@ void Session::_sessionGet (std::string pathToFile) {
 		return;
 	}
 
-    bzero(sendBuffer, MSS);
+	bzero(sendBuffer, MSS);
 	int fByteSize = 0;
 	while((fByteSize = fread(sendBuffer, sizeof(char), MSS, _fi)) > 0)
 	{
