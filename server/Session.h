@@ -36,7 +36,7 @@ public:
 		try {
 			_fs->openFs(storage.c_str());
 		} catch (exception& e) {
-			printf("Error %d\n", errno);
+			printf("Error %d \n", errno);
 		}
 	}
 

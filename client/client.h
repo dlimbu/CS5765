@@ -27,6 +27,7 @@
 #define SRC_CLIENT_CLIENT_H_
 
 #define PORT 1490
+//Max segment size 100B
 #define MSS 100
 
 using namespace std;

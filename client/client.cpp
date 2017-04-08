@@ -93,7 +93,7 @@ void Client::start(string ip, int port) {
  */
 void Client::ftpApp () {
 
-    this->openFs();
+	this->openFs();
 
 	while(1) {
 		printf("$: ");

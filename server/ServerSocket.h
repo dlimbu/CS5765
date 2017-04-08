@@ -41,6 +41,9 @@ public:
 
 	virtual ~ServerSocket();
 
+	/**
+	 *
+	 */
 	void error (const char *msg);
 
 	/**

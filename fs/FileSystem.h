@@ -35,7 +35,7 @@ struct commandStruct {
 };
 
 /**
- *File system error type
+ *File system error enum
  */
 enum FS_ERROR {
 	//File errors.
@@ -58,7 +58,7 @@ private:
 	std::map<string, int> aCode;
 
 	/**
-	 *
+	 * logical eq
 	 */
 	bool _equals(char * c1, char * c2) {
 		return strcmp(c1, c2) == 0;

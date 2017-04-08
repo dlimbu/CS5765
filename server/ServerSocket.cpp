@@ -134,6 +134,7 @@ void ServerSocket::start(const char * ip, int port) {
 		exit(1);
 	}
 
+
 	onConnection();
 }
 

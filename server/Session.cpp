@@ -61,6 +61,9 @@ int Session::getSockFd() {
 	return this->_sockFd;
 }
 
+/**
+ *
+ */
 void Session::onError(const char *msg)
 {
     perror(msg);

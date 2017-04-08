@@ -39,6 +39,5 @@ int main(int argc, char * argv []) {
 	string ipAddress = argv[1];
 	int portno = atoi(argv[2]);
 	s->start(ipAddress.c_str(), portno);
-
 	return 0;
 }
