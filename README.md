@@ -1,20 +1,19 @@
-#####untar
+### untar
 gunzip filename.tar.gz
 
-tar -xvf ../filename.tar
+```tar -xvf ../filename.tar```
 
-#####Compile server and client
+### Compile server and client
 
-$ make sns snc
+```$ make sns snc```
 
 output: two binaries will be created sns(simple network server) and snc (simple network client)
 
-#####Running Server:
+### Running Server:
 
-./sns \<ipaddress> \<port>
+```./sns \<ipaddress> \<port>```
 
-#####Server supported commands:
-
+### Server supported commands:
 - ls
 - cd
 - cd..
@@ -22,11 +21,11 @@ output: two binaries will be created sns(simple network server) and snc (simple 
 - get
 - exit
 
-#####Running client:
+### Running client:
 
-./snc \<ipaddress> \<port>
+```./snc \<ipaddress> \<port>```
 
-#####Client supported commands:
+### Client supported commands:
 
 - lls
 - lpwd
@@ -35,7 +34,7 @@ output: two binaries will be created sns(simple network server) and snc (simple 
 - exit
 - help
 
-#####example:
+### example:
 
 ```
 $: help
